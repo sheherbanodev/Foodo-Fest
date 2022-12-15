@@ -1,0 +1,44 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@examp.com",
+            "password": "1122"
+        },
+        {
+            "id": 2,
+            "name": "Kenny",
+            "email":"Kenny@examp.com",
+            "password": "1133"
+        },
+        {
+            "id": 3,
+            "name": "Mark",
+            "email":"Mark@examp.com",
+            "password":"1144"
+        },
+        {
+            "id": 4,
+            "name": "Justin",
+            "email":"Justin@examp.com",
+            "password":"1155"
+        }
+    ],
+   "customer": [
+    {
+        "id": 1,
+        "name": "Fine Doe",
+        "email": "Fine@examp.com",
+        "phoneNumber": "0324111111222",
+        "isBlocked": false
+    },
+    {
+        "id": 2,
+        "name": "Petter",
+        "email": "Petter@examp.com",
+        "phoneNumber": "043566666666",
+        "isBlocked": true
+    }
+    ]
+}
