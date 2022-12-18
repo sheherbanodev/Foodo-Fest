@@ -54,12 +54,27 @@ export default function MainListItems() {
         </ListItemIcon>
         <ListItemText primary="Customers" />
       </ListItemButton>
+
+      <ListItemButton  onClick={() => {
+          //localStorage.removeItem("user");
+          // let history = useHistory();
+          // history.goBack();
+         
+          navigate('/categories')
+        }}>
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Categories" />
+      </ListItemButton>
+      {/* <Link to="login"> */}
       <ListItemButton >
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
         <ListItemText primary="Reports" />
       </ListItemButton>
+      
       {/* <Link to="login"> */}
       <ListItemButton
         onClick={() => {
