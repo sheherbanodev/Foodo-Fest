@@ -6,7 +6,7 @@ import Orders from "./containers/orders";
 import Login from "./containers/login";
 import Auth from "./components/Auth";
 import Customers from "./containers/customer";
-
+import Categories from "./containers/categories";
 function App() {
   return (
     <BrowserRouter>
@@ -24,6 +24,14 @@ function App() {
           element={
             <Auth>
               <Customers />
+            </Auth>
+          }
+        />
+         <Route
+          path="/categories"
+          element={
+            <Auth>
+              <Categories />
             </Auth>
           }
         />
