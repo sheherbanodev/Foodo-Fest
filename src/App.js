@@ -7,6 +7,7 @@ import Login from "./containers/login";
 import Auth from "./components/Auth";
 import Customers from "./containers/customer";
 import Categories from "./containers/categories";
+import MenuList from "./containers/menuList";
 function App() {
   return (
     <BrowserRouter>
@@ -27,7 +28,7 @@ function App() {
             </Auth>
           }
         />
-         <Route
+        <Route
           path="/categories"
           element={
             <Auth>
@@ -35,11 +36,22 @@ function App() {
             </Auth>
           }
         />
-        <Route path="/orders" element={
-          <Auth>
+        <Route
+          path="/menuList"
+          element={
+            <Auth>
+              <MenuList />
+            </Auth>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <Auth>
               <Orders />
             </Auth>
-        } />
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Login />} />
         <Route path="*" element={<Login />} />
