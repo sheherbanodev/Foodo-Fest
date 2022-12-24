@@ -6,6 +6,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import MenuOpenOutlinedIcon from '@mui/icons-material/MenuOpenOutlined';
 import PeopleIcon from "@mui/icons-material/People";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import LayersIcon from "@mui/icons-material/Layers";
@@ -41,6 +42,18 @@ export default function MainListItems() {
           <ShoppingCartIcon />
         </ListItemIcon>
         <ListItemText primary="Orders" />
+      </ListItemButton>
+      <ListItemButton onClick={() => {
+          //localStorage.removeItem("user");
+          // let history = useHistory();
+          // history.goBack();
+         
+          navigate('/menuList');
+        }}>
+        <ListItemIcon>
+          <MenuOpenOutlinedIcon />
+        </ListItemIcon>
+        <ListItemText primary="MenuList" />
       </ListItemButton>
       <ListItemButton onClick={() => {
           //localStorage.removeItem("user");

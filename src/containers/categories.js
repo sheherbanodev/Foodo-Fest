@@ -25,9 +25,14 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MainListItems from "./listItems";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import Modal from '@mui/material/Modal';
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+
 // import "../style/menu.scss";
 import { Loader, LoaderBackdrop } from "../components/Loader";
+import Input from "@mui/material/Input";
+
+const ariaLabel = { "aria-label": "description" };
 
 const style = {
   position: "absolute",
@@ -97,24 +102,34 @@ const mdTheme = createTheme();
 export default function Categories() {
   const [categoriesList, setCategoriesList] = React.useState([
     {
-      name: "test",
+      id: "id",
+     // name:"name",
+      image:"image",
     },
   ]);
   const [selectedItem, setSelectedItem] = React.useState(null);
+  const [catName, setCatName] = React.useState("");
+  const [catImage, setCatImage] = React.useState("");
   const [open, setOpen] = React.useState(true);
   const [openModal, setOpenModal] = React.useState(false);
+  const [openCreateModal, setOpenCreateModal] = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
   //const [categories, setcategories] = React.useState([]);
   useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
     fetch("http://localhost:3000/categories")
       .then((data) => data.json())
       .then((actualData) => {
         console.log(actualData);
         setCategoriesList(actualData);
       });
-  }, []);
+  };
 
   return (
     // <h2>Categories</h2>
@@ -224,6 +239,23 @@ export default function Categories() {
             }}
           >
             <Toolbar />
+            <div style={{ width: "100%" }}>
+              <Button
+              onClick={()=>{
+                setOpenCreateModal(true)
+              }}
+                style={{
+                  marginLeft: "90%",
+                  marginTop: "2%",
+                  color: "black",
+                  background: "#fbbe36",
+                }}
+                variant="contained"
+              >
+                + Add New
+              </Button>
+            </div>
+
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
@@ -275,8 +307,8 @@ export default function Categories() {
                                   size="small"
                                   fullWidth
                                   onClick={() => {
-                                      setOpenModal(true)
-                                    //   setSelectedItem(item);
+                                    setOpenModal(true);
+                                    setSelectedItem(item);
                                     //   handleOpenEdit();
                                   }}
                                   style={{
@@ -288,7 +320,8 @@ export default function Categories() {
                                 </Button>
                                 <Button
                                   onClick={() => {
-                                    //   setSelectedItem(item);
+                                    setOpenDeleteModal(true);
+                                       setSelectedItem(item);
                                     //   handleOpenDelete();
                                     // handleClick();
                                   }}
@@ -319,22 +352,229 @@ export default function Categories() {
       <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
         See more orders
       </Link>
+      {selectedItem !== null && (
+        <Modal
+          open={openModal}
+          onClose={() => {
+            setOpenModal(false);
+          }}
+          aria-labelledby="parent-modal-title"
+          aria-describedby="parent-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "30%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 400,
+              bgcolor: "background.paper",
+              border: "2px solid #fbbe36",
+              boxShadow: 24,
+              p: 4,
+              borderRadius: 2,
+            }}
+          >
+            <Input
+              disabled
+              defaultValue="Update Categorey"
+              inputProps={ariaLabel}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Category Name"
+              name=""
+              value={selectedItem.name}
+              onChange={(e) => {
+                let tempData = JSON.parse(JSON.stringify(selectedItem));
+                tempData.name = e.target.value;
+                setSelectedItem(tempData);
+              }}
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Picture URL"
+              value={selectedItem.image}
+              //   autoComplete="email"
+              onChange={(e) => {
+                let tempData = JSON.parse(JSON.stringify(selectedItem));
+                tempData.image = e.target.value;
+                setSelectedItem(tempData);
+              }}
+              autoFocus
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                console.log(JSON.stringify(selectedItem));
+                fetch("http://localhost:3000/categories/" + selectedItem.id, {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(selectedItem),
+                })
+                  .then((data) => data.json())
+                  .then((actualData) => {
+                    console.log(actualData);
+                    getData();
+                    setOpenModal(false);
+                  });
+              }}
+            >
+              Update
+            </Button>
+            {/* <ChildModal /> */}
+          </Box>
+        </Modal>
+      )}
       <Modal
-        open={openModal}
-        onClose={()=>{
-            setOpenModal(false)
+        open={openCreateModal}
+        onClose={() => {
+            setOpenCreateModal(false);
         }}
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
       >
-        <Box sx={{ ...style, width: 400 }}>
-          <h2 id="parent-modal-title">Text in a modal</h2>
-          <p id="parent-modal-description">
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </p>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "30%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #fbbe36",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+        >
+          <Input
+            disabled
+            defaultValue="Add New Category"
+            inputProps={ariaLabel}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Category Name"
+            name=""
+            value={catName}
+            onChange={(e) => {
+              setCatName(e.target.value);
+            }}
+            autoFocus
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Picture URL"
+            value={catImage}
+            onChange={(e) => {
+              setCatImage(e.target.value);
+            }}
+            autoFocus
+          />
+          <Button
+            variant="contained"
+            onClick={() => {
+                if(catName===''){
+                    window.alert('Add Category name')
+                    return
+                }
+                if(catImage===''){
+                    window.alert('Add Category image')
+                    return
+                }
+                let dataObj={
+                    name:catName,
+                    image:catImage
+                }
+              console.log(JSON.stringify(selectedItem));
+              fetch("http://localhost:3000/categories", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataObj),
+              })
+                .then((data) => data.json())
+                .then((actualData) => {
+                  console.log(actualData);
+                  getData();
+                  setOpenCreateModal(false);
+                });
+            }}
+          >
+            Save
+          </Button>
           {/* <ChildModal /> */}
         </Box>
       </Modal>
+      {selectedItem !== null && <Modal
+        open={openDeleteModal}
+        onClose={() => {
+            setOpenDeleteModal(false);
+        }}
+        aria-labelledby="parent-modal-title"
+        aria-describedby="parent-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "30%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #fbbe36",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+        >
+         <h2>Delete Alert!</h2>
+         <h4>Are you sure you want to delete {selectedItem.name} {' '}category?</h4>
+       
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+               
+              console.log(JSON.stringify(selectedItem));
+              fetch("http://localhost:3000/categories/"+selectedItem.id, {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                //body: JSON.stringify(dataObj),
+              })
+                .then((data) => data.json())
+                .then((actualData) => {
+                  console.log(actualData);
+                  getData();
+                  setOpenDeleteModal(false);
+                });
+            }}
+          >
+            Delete
+          </Button>
+          {/* <ChildModal /> */}
+        </Box>
+      </Modal>
+      }
     </React.Fragment>
   );
 }

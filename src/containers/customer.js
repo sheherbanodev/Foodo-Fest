@@ -26,22 +26,26 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MainListItems from "./listItems";
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import Snackbar, { SnackbarOrigin } from "@mui/material/Snackbar";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import MuiAlert from "@mui/material/Alert";
+//import { Snackbar } from "@mui/material";
 //import Orders from './orders';
 import React, { useState, useEffect } from "react";
 
-
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
-  
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
 
 function preventDefault(event) {
   event.preventDefault();
@@ -95,19 +99,37 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 export default function Customers() {
-  const [open, setOpen] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
+  const [state, setState] = React.useState({
+    Open: false,
+    vertical: "top",
+    horizontal: "center",
+  });
+  const { vertical, horizontal, Open } = state;
+  const handleClick = () => {
+    console.log("Call in");
+    setState({ Open: true, vertical: "top", horizontal: "center" });
   };
+  const handleClose = () => {
+    setState({ Open: false, vertical: "top", horizontal: "center" });
+  };
+  const [open, setopen] = React.useState(true);
+  const toggleDrawer = () => {
+    setopen(!open);
+  };
+  const [selected, setSelected] = React.useState(null);
   const [customers, setcustomers] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:3000/customer")
-      .then((data) => data.json())
-      .then((actualData) => {
-        console.log(actualData);
-        setcustomers(actualData);
-      });
+    getData()
   }, []);
+
+  const getData = () => {
+    fetch("http://localhost:3000/customer")
+    .then((data) => data.json())
+    .then((actualData) => {
+      console.log(actualData);
+      setcustomers(actualData);
+    });
+  }
   return (
     <React.Fragment>
       {/* <Title>Customer List</Title> */}
@@ -168,7 +190,6 @@ export default function Customers() {
                 <MenuIcon />
               </IconButton>
               <Typography
-              
                 component="h1"
                 variant="h6"
                 color="inherit"
@@ -217,44 +238,73 @@ export default function Customers() {
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
               <Grid container spacing={3}>
-                
                 <Grid item xs={12}>
-                <Paper sx={{ p: 0, display: 'flex', flexDirection: 'column' }}>
-                <Table size="large">
-                  <TableHead>
-                    <TableRow>
-                      <StyledTableCell>ID</StyledTableCell>
-                      <StyledTableCell>Name</StyledTableCell>
-                      <StyledTableCell>Email</StyledTableCell>
-                      <StyledTableCell>Phone Number</StyledTableCell>
-                      <StyledTableCell>Status</StyledTableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {customers.map((customers) => (
-                      <TableRow>
-                        <TableCell>{customers.id}</TableCell>
-                        <TableCell>{customers.name}</TableCell>
-                        <TableCell>{customers.email}</TableCell>
-                        <TableCell>{customers.phoneNumber}</TableCell>
-                        <TableCell>
-                          <Button
+                  <Paper
+                    sx={{ p: 0, display: "flex", flexDirection: "column" }}
+                  >
+                    <Table size="large">
+                      <TableHead>
+                        <TableRow>
+                          <StyledTableCell>ID</StyledTableCell>
+                          <StyledTableCell>Name</StyledTableCell>
+                          <StyledTableCell>Email</StyledTableCell>
+                          <StyledTableCell>Phone Number</StyledTableCell>
+                          <StyledTableCell>Status</StyledTableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {customers.map((customers) => (
+                          <TableRow>
+                            <TableCell>{customers.id}</TableCell>
+                            <TableCell>{customers.name}</TableCell>
+                            <TableCell>{customers.email}</TableCell>
+                            <TableCell>{customers.phoneNumber}</TableCell>
+                            <TableCell>
+                              {/* <Button
                             variant="contained"
                             color={customers.isBlocked ? "success" : "error"}
                             onClick={() => {}}
                           >
                             {customers.isBlocked ? "unBlocked" : "Blocked"}
-                          </Button>
-                        </TableCell>
+                          </Button> */}
+                              {customers.isBlock === undefined ||
+                              customers.isBlock === false ? (
+                                <Button
+                                  onClick={() => {
+                                    console.log("Call");
+                                    setSelected(customers);
+                                    handleClick();
+                                  }}
+                                  variant="contained"
+                                  size="small"
+                                  className="reject_button"
+                                >
+                                  Block
+                                </Button>
+                              ) : (
+                                <Button
+                                  onClick={() => {
+                                    console.log("Call");
+                                    setSelected(customers);
+                                    handleClick();
+                                  }}
+                                  variant="contained"
+                                  size="small"
+                                  className="accept_button"
+                                >
+                                  Un-Block
+                                </Button>
+                              )}
+                            </TableCell>
 
-                        {/* <TableCell>{customers.paymentMethod}</TableCell> */}
-                        {/* <TableCell align="right">{`$${row.amount}`}</TableCell> */}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                </Paper>
-              </Grid>
+                            {/* <TableCell>{customers.paymentMethod}</TableCell> */}
+                            {/* <TableCell align="right">{`$${row.amount}`}</TableCell> */}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Paper>
+                </Grid>
               </Grid>
               {/* <Copyright sx={{ pt: 4 }} /> */}
             </Container>
@@ -264,6 +314,69 @@ export default function Customers() {
       <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
         See more Customers
       </Link>
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={Open}
+        onClose={handleClose}
+        // message="Do you want to reject this Order?"
+        key={vertical + horizontal}
+      >
+        <Alert onClose={handleClose} severity="warning" sx={{ width: "100%" }}>
+          Do you want to{" "}
+          {selected !== null
+            ? selected.isBlock === undefined || selected.isBlock === false
+              ? "Block"
+              : "Un-Block"
+            : ""}{" "}
+          {selected !== null ? selected.name : ""} ?
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "10px",
+            }}
+          >
+            <Button
+              onClick={() => {
+                let tempData = JSON.parse(JSON.stringify(selected));
+                tempData.isBlock =
+                  selected !== null
+                    ? selected.isBlock === undefined ||
+                      selected.isBlock === false
+                      ? true
+                      : false
+                    : false;
+                fetch("http://localhost:3000/customer/" + selected.id, {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(tempData),
+                })
+                  .then((data) => data.json())
+                  .then((actualData) => {
+                    console.log(actualData);
+                    getData();
+                    handleClose();
+                  });
+              }}
+              variant="contained"
+              size="small"
+              style={{ background: "#ffff", color: "black" }}
+            >
+              Yes
+            </Button>
+            <Button
+              onClick={handleClose}
+              variant="contained"
+              size="small"
+              style={{ background: "#ffff", color: "black" }}
+            >
+              No
+            </Button>
+          </div>
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   );
 }
