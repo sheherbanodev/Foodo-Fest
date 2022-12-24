@@ -5,7 +5,7 @@ import TableBody from "@mui/material/TableBody";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "../components/Title";
-import { Button } from "@mui/material";
+import { Button, MenuItem, Select } from "@mui/material";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
@@ -26,6 +26,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MainListItems from "./listItems";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import moment from "moment";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,52 +38,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 // Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
-
-const rows = [
-  createData(
-    0,
-    "16 Mar, 2019",
-    "Elvis Presley",
-    "Tupelo, MS",
-    "VISA ⠀•••• 3719",
-    312.44
-  ),
-  createData(
-    1,
-    "16 Mar, 2019",
-    "Paul McCartney",
-    "London, UK",
-    "VISA ⠀•••• 2574",
-    866.99
-  ),
-  createData(
-    2,
-    "16 Mar, 2019",
-    "Tom Scholz",
-    "Boston, MA",
-    "MC ⠀•••• 1253",
-    100.81
-  ),
-  createData(
-    3,
-    "16 Mar, 2019",
-    "Michael Jackson",
-    "Gary, IN",
-    "AMEX ⠀•••• 2000",
-    654.39
-  ),
-  createData(
-    4,
-    "15 Mar, 2019",
-    "Bruce Springsteen",
-    "Long Branch, NJ",
-    "VISA ⠀•••• 5919",
-    212.79
-  ),
-];
 
 function preventDefault(event) {
   event.preventDefault();
@@ -138,9 +93,25 @@ const mdTheme = createTheme();
 
 export default function Orders() {
   const [open, setOpen] = React.useState(true);
+  const [orders, setOrders] = React.useState([]);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  React.useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    fetch("http://localhost:3000/orders")
+      .then((data) => data.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setOrders(actualData);
+      });
+  };
+
   return (
     <React.Fragment>
       {/* <Title>Recent Orders</Title> */}
@@ -256,20 +227,67 @@ export default function Orders() {
                       <TableHead>
                         <TableRow>
                           <StyledTableCell>Date</StyledTableCell>
-                          <StyledTableCell>Name</StyledTableCell>
-                          <StyledTableCell>Ship To</StyledTableCell>
-                          <StyledTableCell>Payment Method</StyledTableCell>
-                          <StyledTableCell align="right">Sale Amount</StyledTableCell>
+                          <StyledTableCell>Customer Name</StyledTableCell>
+                          <StyledTableCell>Address</StyledTableCell>
+                          <StyledTableCell>Items</StyledTableCell>
+                          <StyledTableCell>Total</StyledTableCell>
+                          <StyledTableCell align="right">
+                            Status
+                          </StyledTableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {rows.map((row) => (
+                        {orders.map((row, index) => (
                           <TableRow key={row.id}>
                             <TableCell>{row.date}</TableCell>
                             <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.shipTo}</TableCell>
-                            <TableCell>{row.paymentMethod}</TableCell>
-                            <TableCell align="right">{`$${row.amount}`}</TableCell>
+                            <TableCell>{row.address}</TableCell>
+                            <TableCell>
+                              {row.products.map((e) => e + ",")}
+                            </TableCell>
+                            <TableCell>{row.total}</TableCell>
+                            <TableCell align="right">
+                              <Select
+                                sx={{ width: 202 }}
+                                value={row.status}
+                                onChange={(e) => {
+                                  let tempData = JSON.parse(
+                                    JSON.stringify(orders)
+                                  );
+                                  tempData[index].status = e.target.value;
+                                  console.log(tempData[index].id);
+                                  fetch(
+                                    "http://localhost:3000/orders/" +
+                                      tempData[index].id,
+                                    {
+                                      method: "PUT",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                      body: JSON.stringify(tempData[index]),
+                                    }
+                                  )
+                                    .then((data) => data.json())
+                                    .then((actualData) => {
+                                      console.log(actualData);
+                                      getData();
+                                    });
+                                  // setOrders(tempData);
+                                }}
+                                displayEmpty
+                                inputProps={{ "aria-label": "Without label" }}
+                                size="small"
+                              >
+                                <MenuItem key={1} value={"Pending"}>Pending</MenuItem>
+                                <MenuItem key={2} value={"Preparing"}>
+                                  Preparing
+                                </MenuItem>
+                                <MenuItem key={3} value={"Ready"}>Ready</MenuItem>
+                                <MenuItem key={4} value={"Deliver"}>Deliver</MenuItem>
+                                <MenuItem key={5} value={"Complete"}>Complete</MenuItem>
+                                <MenuItem key={6} value={"Cancel"}>Cancel</MenuItem>
+                              </Select>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>

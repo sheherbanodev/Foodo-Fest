@@ -57,6 +57,11 @@
       "name": "Fries",
       "image": "https://www.acouplecooks.com/wp-content/uploads/2022/06/Cheese-Fries-005.jpg",
       "id": 7
+    },
+    {
+      "name": "Pasta",
+      "image": "https://www.vegrecipesofindia.com/wp-content/uploads/2021/06/fettuccine-alfredo-1.jpg",
+      "id": 8
     }
   ],
   "products": [
@@ -108,6 +113,45 @@
       "image": "https://juliesfamilykitchen.com/wp-content/uploads/2021/11/Crispy-Zinger-Burger-KFC-Chicken-Burger-Copycat-Recipe.jpg",
       "price": "800",
       "id": 8
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "date": "22/12/2022 08:12 am",
+      "name": "Wasif",
+      "total": 550,
+      "products": [
+        "fries",
+        "loded fries"
+      ],
+      "status": "Deliver",
+      "address": "Lahore Cantt"
+    },
+    {
+      "id": 2,
+      "date": "22/12/2022 08:12 am",
+      "name": "Wasif",
+      "total": 550,
+      "products": [
+        "fries",
+        "loded fries"
+      ],
+      "status": "Complete",
+      "address": "Lahore Cantt"
+    },
+    {
+      "id": 3,
+      "date": "23/12/2022 09:12 pm",
+      "name": "Hamna",
+      "total": 1080,
+      "products": [
+        "fries",
+        "Pizza",
+        "Burger"
+      ],
+      "status": "Ready",
+      "address": "Lahore Cantt"
     }
   ]
 }

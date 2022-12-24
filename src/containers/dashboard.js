@@ -238,7 +238,7 @@ function DashboardContent() {
                   <Deposits />
                 </Paper>
               </Grid> */}
-              {/* Recent Orders */}
+              Recent Orders
               
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
