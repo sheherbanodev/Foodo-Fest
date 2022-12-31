@@ -23,6 +23,24 @@
       "name": "Justin",
       "email": "Justin@examp.com",
       "password": "1155"
+    },
+    {
+      "username": "sheher",
+      "email": "email@email.com",
+      "password": "12345",
+      "id": 5
+    },
+    {
+      "username": "sheher",
+      "email": "email@email.com",
+      "password": "12345",
+      "id": 6
+    },
+    {
+      "username": "sheher",
+      "email": "email@email.com",
+      "password": "12345",
+      "id": 7
     }
   ],
   "customer": [

@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import React, { useState, useEffect } from "react";
+// import fetch from 'node-fetch';
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -46,7 +47,6 @@ export default function Login() {
     return email.length > 0 && password.length > 0;
   }
 
-  
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -56,19 +56,43 @@ export default function Login() {
     });
   };
 
-  const btnlogin = () => {
-    fetch(`http://localhost:3000/users`)
-      .then((response) => response.json())
-      .then((actualData) => {
+  const btnlogin = async() => {
+    const loginObj = {
+      email: email,
+      password: password,
+    };
+    await fetch("http://localhost:5000/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(loginObj),
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (actualData,message,token) {
         console.log(actualData);
-        actualData.map((data) => {
-          if (data.email === email && data.password === password) {
-            console.log(data);
-            localStorage.setItem('user',JSON.stringify(data));
-            navigate("/dashboard")
-          }
-        });
+        localStorage.setItem('user',JSON.stringify(actualData),(message),(token));
+        navigate("/dashboard")
       });
+    // fetch(`http://localhost:5000/users/login`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(loginObj),
+    // })
+    //   .then((response) => response.json())
+    //   .then((actualData) => {
+    //     console.log(actualData);
+
+    //     // if (data.email === email && data.password === password) {
+    //     //   console.log(data);
+    //     //   localStorage.setItem('user',JSON.stringify(data));
+    //     //   navigate("/dashboard")
+    //     // }
+    //   });
   };
 
   return (
@@ -145,11 +169,11 @@ export default function Login() {
                 label="Remember me"
               />
               <Button
-                type="submit"
+                type="button"
                 fullWidth
                 variant="contained"
                 disabled={!validateForm()}
-                onClick={btnlogin}
+                onClick={() => { btnlogin()}}
                 sx={{ mt: 3, mb: 2 }}
               >
                 Sign In
